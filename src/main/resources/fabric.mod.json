@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "template_mod",
+  "id": "tweakerkit",
   "version": "${version}",
 
-  "name": "template_mod",
+  "name": "TweakerKit",
   "description": "",
   "authors": [
     "Ivan1F"
@@ -13,16 +13,16 @@
     "sources": "https://github.com/"
   },
 
-  "icon": "assets/template_mod/icon.png",
+  "icon": "assets/tweakerkit/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.ivan1f.template_mod.TemplateMod"
+      "me.ivan1f.tweakerkit.TweakerKitMod"
     ]
   },
   "mixins": [
-    "template_mod.mixins.json"
+    "tweakerkit.mixins.json"
   ],
 
   "depends": {
