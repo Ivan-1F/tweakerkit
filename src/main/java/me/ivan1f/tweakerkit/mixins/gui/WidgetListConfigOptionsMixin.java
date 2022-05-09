@@ -6,6 +6,7 @@ import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetConfigOption;
 import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptions;
 import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptionsBase;
+import me.ivan1f.tweakerkit.gui.GuiFeatureType;
 import me.ivan1f.tweakerkit.gui.TranslatableLabel;
 import me.ivan1f.tweakerkit.gui.TweakerKitConfigGui;
 import org.spongepowered.asm.mixin.Final;
@@ -28,6 +29,15 @@ public abstract class WidgetListConfigOptionsMixin extends WidgetListConfigOptio
 
     public WidgetListConfigOptionsMixin(int x, int y, int width, int height, int configWidth) {
         super(x, y, width, height, configWidth);
+    }
+
+    private boolean isTweakerKitConfigGui() {
+        return this.parent instanceof TweakerKitConfigGui;
+    }
+
+    private boolean isFeatureEnabled(GuiFeatureType type) {
+        if (!isTweakerKitConfigGui()) return false;
+        return ((TweakerKitConfigGui) this.parent).isFeatureEnabled(type);
     }
 
     @ModifyArg(
@@ -80,10 +90,10 @@ public abstract class WidgetListConfigOptionsMixin extends WidgetListConfigOptio
             remap = false
     )
     private void adjustConfigAndOptionPanelWidth$tweakerkit(CallbackInfo ci) {
-//        if (this.parent instanceof TweakerKitConfigGui) {
+        if (isFeatureEnabled(GuiFeatureType.RIGHT_ALIGNED_PANE)) {
             Pair<Integer, Integer> result = TweakerKitConfigGui.adjustWidths(this.totalWidth, this.maxLabelWidth);
             this.maxLabelWidth = result.getFirst();
             this.configWidth = result.getSecond();
-//        }
+        }
     }
 }

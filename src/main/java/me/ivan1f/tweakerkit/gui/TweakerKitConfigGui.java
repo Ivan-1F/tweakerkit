@@ -1,12 +1,17 @@
 package me.ivan1f.tweakerkit.gui;
 
+import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 public abstract class TweakerKitConfigGui extends GuiConfigsBase {
+    public Map<GuiFeatureType, Boolean> features = Maps.newHashMap();
+
     public TweakerKitConfigGui(int listX, int listY, String modId, @Nullable Screen parent, String titleKey, Object... args) {
         super(listX, listY, modId, parent, titleKey, args);
     }
@@ -28,5 +33,9 @@ public abstract class TweakerKitConfigGui extends GuiConfigsBase {
         panelWidth = Math.max(panelWidth, 0);
 
         return Pair.of(labelWidth, panelWidth);
+    }
+
+    public boolean isFeatureEnabled(GuiFeatureType type) {
+        return this.features.getOrDefault(type, false);
     }
 }

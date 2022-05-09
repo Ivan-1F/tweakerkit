@@ -7,6 +7,7 @@
     "gui.KeybindMultiAccessor",
     "gui.WidgetLabelMixin",
     "gui.WidgetListConfigOptionMixin",
+    "gui.WidgetListConfigOptionsAccessor",
     "gui.WidgetListConfigOptionsMixin"
   ],
   "client": [
