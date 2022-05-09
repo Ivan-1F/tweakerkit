@@ -11,10 +11,7 @@ import fi.dy.masa.malilib.gui.interfaces.IKeybindConfigGui;
 import fi.dy.masa.malilib.gui.widgets.*;
 import fi.dy.masa.malilib.hotkeys.*;
 import fi.dy.masa.malilib.util.StringUtils;
-import me.ivan1f.tweakerkit.gui.GuiFeatureType;
-import me.ivan1f.tweakerkit.gui.HotkeyedBooleanResetListener;
-import me.ivan1f.tweakerkit.gui.TranslatableLabel;
-import me.ivan1f.tweakerkit.gui.TweakerKitConfigGui;
+import me.ivan1f.tweakerkit.gui.*;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,13 +31,13 @@ public abstract class WidgetListConfigOptionMixin extends WidgetConfigOptionBase
         super(x, y, width, height, parent, entry, listIndex);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isTweakerKitConfigGui() {
         return this.parent instanceof WidgetListConfigOptions && ((WidgetListConfigOptionsAccessor) this.parent).getParent() instanceof TweakerKitConfigGui;
     }
 
-    private boolean isFeatureEnabled(GuiFeatureType type) {
-        if (!isTweakerKitConfigGui()) return false;
-        return ((TweakerKitConfigGui) ((WidgetListConfigOptionsAccessor) this.parent).getParent()).isFeatureEnabled(type);
+    private <T> T getFeatureValue(FeatureConfig.Key<T> key) {
+        return ((TweakerKitConfigGui) ((WidgetListConfigOptionsAccessor) this.parent).getParent()).getFeatureValue(key);
     }
 
     @ModifyArgs(
@@ -53,7 +50,8 @@ public abstract class WidgetListConfigOptionMixin extends WidgetConfigOptionBase
             remap = false
     )
     private void useTranslatableLabel(Args args, int x_, int y_, float zLevel, int labelWidth, int configWidth, IConfigBase config) {
-        if (isFeatureEnabled(GuiFeatureType.TRANSLATED_LABEL)) {
+        if (!isTweakerKitConfigGui()) return;
+        if (getFeatureValue(FeatureConfig.TRANSLATABLE_LABEL)) {
             int x = args.get(0);
             int y = args.get(1);
             int width = args.get(2);
@@ -83,7 +81,8 @@ public abstract class WidgetListConfigOptionMixin extends WidgetConfigOptionBase
             cancellable = true
     )
     private void tweakerKitCustomConfigGui(int x, int y, float zLevel, int labelWidth, int configWidth, IConfigBase config, CallbackInfo ci) {
-        if (isFeatureEnabled(GuiFeatureType.BETTER_CONFIG_PANE) && config instanceof IHotkey) {
+        if (!isTweakerKitConfigGui()) return;
+        if (getFeatureValue(FeatureConfig.BETTER_CONFIG_PANE) && config instanceof IHotkey) {
             boolean modified = true;
             if (config instanceof IHotkeyTogglable) {
                 this.addBooleanAndHotkeyWidgets$tweakerkit(x, y, configWidth, (IHotkeyTogglable) config);
