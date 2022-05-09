@@ -4,8 +4,10 @@
   "package": "me.ivan1f.tweakerkit.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "gui.KeybindMultiAccessor",
     "gui.WidgetLabelMixin",
-    "gui.WidgetListConfigOptionMixin"
+    "gui.WidgetListConfigOptionMixin",
+    "gui.WidgetListConfigOptionsMixin"
   ],
   "client": [
   ],
