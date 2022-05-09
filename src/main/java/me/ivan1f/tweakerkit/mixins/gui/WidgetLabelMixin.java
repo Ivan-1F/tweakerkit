@@ -67,7 +67,7 @@ public abstract class WidgetLabelMixin extends WidgetBase {
     )
     private void showOriginalLines(int mouseX, int mouseY, boolean selected, CallbackInfo ci, int fontHeight, int yCenter, int yTextStart, int i, String text) {
         if (this.shouldUseTranslatableLabel()) {
-            int color = darkerColor$tweakerplus(this.textColor);
+            int color = darkerColor$tweakerkit(this.textColor);
             double scale = TranslatableLabel.TRANSLATION_SCALE;
             String originText = ((TranslatableLabel) (Object) this).getOriginalLines()[i];
             int x = this.x + (this.centered ? this.width / 2 : 0);
@@ -88,7 +88,7 @@ public abstract class WidgetLabelMixin extends WidgetBase {
     }
 
     @SuppressWarnings("PointlessBitwiseExpression")
-    private static int darkerColor$tweakerplus(int color) {
+    private static int darkerColor$tweakerkit(int color) {
         int a = (color >> 24) & 0xFF;
         int r = (color >> 16) & 0xFF;
         int g = (color >> 8) & 0xFF;
