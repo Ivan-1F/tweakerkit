@@ -4,6 +4,8 @@
   "package": "me.ivan1f.tweakerkit.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "gui.WidgetLabelMixin",
+    "gui.WidgetListConfigOptionMixin"
   ],
   "client": [
   ],
