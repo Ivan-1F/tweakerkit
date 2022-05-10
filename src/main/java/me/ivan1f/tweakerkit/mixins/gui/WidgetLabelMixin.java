@@ -18,11 +18,11 @@ import java.util.List;
 
 @Mixin(WidgetLabel.class)
 public abstract class WidgetLabelMixin extends WidgetBase {
-    @Shadow @Final protected int textColor;
+    @Shadow(remap = false) @Final protected int textColor;
 
-    @Shadow protected boolean centered;
+    @Shadow(remap = false) protected boolean centered;
 
-    @Shadow @Final protected List<String> labels;
+    @Shadow(remap = false) @Final protected List<String> labels;
 
     public WidgetLabelMixin(int x, int y, int width, int height) {
         super(x, y, width, height);
