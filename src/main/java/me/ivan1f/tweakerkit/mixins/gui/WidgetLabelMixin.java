@@ -4,6 +4,7 @@ import fi.dy.masa.malilib.gui.widgets.WidgetBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetLabel;
 import me.ivan1f.tweakerkit.gui.TranslatableLabel;
 import me.ivan1f.tweakerkit.utils.render.RenderContext;
+import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -65,7 +66,7 @@ public abstract class WidgetLabelMixin extends WidgetBase {
             remap = false,
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    private void showOriginalLines(int mouseX, int mouseY, boolean selected, CallbackInfo ci, int fontHeight, int yCenter, int yTextStart, int i, String text) {
+    private void showOriginalLines(int mouseX, int mouseY, boolean selected, MatrixStack matrixStackd, CallbackInfo ci, int fontHeight, int yCenter, int yTextStart, int i, String text) {
         if (this.shouldUseTranslatableLabel()) {
             int color = darkerColor$tweakerkit(this.textColor);
             double scale = TranslatableLabel.TRANSLATION_SCALE;
@@ -73,7 +74,7 @@ public abstract class WidgetLabelMixin extends WidgetBase {
             int x = this.x + (this.centered ? this.width / 2 : 0);
             int y = (int) (yTextStart + (this.labels.size() + i * scale + 0.2) * fontHeight);
 
-            RenderContext renderContext = new RenderContext();
+            RenderContext renderContext = new RenderContext(matrixStackd);
 
             renderContext.pushMatrix();
             renderContext.scale(scale, scale, 1);
@@ -81,9 +82,9 @@ public abstract class WidgetLabelMixin extends WidgetBase {
             y /= scale;
 
             if (this.centered) {
-                this.drawCenteredStringWithShadow(x, y, color, originText);
+                this.drawCenteredStringWithShadow(x, y, color, originText, matrixStackd);
             } else {
-                this.drawStringWithShadow(x, y, color, originText);
+                this.drawStringWithShadow(x, y, color, originText, matrixStackd);
             }
             renderContext.popMatrix();
         }
