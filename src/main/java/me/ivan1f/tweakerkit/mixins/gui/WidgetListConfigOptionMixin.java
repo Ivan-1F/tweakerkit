@@ -65,7 +65,7 @@ public abstract class WidgetListConfigOptionMixin extends WidgetConfigOptionBase
 
             args.set(5, null);  // cancel original call
 
-            TranslatableLabel label = new TranslatableLabel(x, y, width, height, textColor, lines, config.getName());
+            TranslatableLabel label = new TranslatableLabel(x, y, width, height, textColor, lines, new String[]{config.getName()});
             this.addWidget(label);
         }
     }
