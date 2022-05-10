@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "gui.KeybindMultiAccessor",
+    "gui.WidgetDropDownListMixin",
     "gui.WidgetLabelMixin",
     "gui.WidgetListConfigOptionMixin",
     "gui.WidgetListConfigOptionsAccessor",
