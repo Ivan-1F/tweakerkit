@@ -71,27 +71,17 @@ public abstract class WidgetListConfigOptionMixin extends WidgetConfigOptionBase
     }
 
     @Inject(
-            method = "addConfigOption",
-            at = @At(
-                    value = "FIELD",
-                    target = "Lfi/dy/masa/malilib/config/ConfigType;BOOLEAN:Lfi/dy/masa/malilib/config/ConfigType;",
-                    remap = false
-            ),
+            method = "addHotkeyConfigElements",
+            at = @At(value = "HEAD"),
             remap = false,
             cancellable = true
     )
-    private void tweakerKitCustomConfigGui(int x, int y, float zLevel, int labelWidth, int configWidth, IConfigBase config, CallbackInfo ci) {
+    private void tweakerMoreCustomConfigGui(int x, int y, int configWidth, String configName, IHotkey config, CallbackInfo ci) {
         if (!isTweakerKitConfigGui()) return;
-        if (getFeatureValue(FeatureConfig.BETTER_CONFIG_PANE) && config instanceof IHotkey) {
-            boolean modified = true;
-            if (config instanceof IHotkeyTogglable) {
-                this.addBooleanAndHotkeyWidgets$tweakerkit(x, y, configWidth, (IHotkeyTogglable) config);
-            } else if (((IHotkey) config).getKeybind() instanceof KeybindMulti) {
-                this.addButtonAndHotkeyWidgets$tweakerkit(x, y, configWidth, (IHotkey) config);
-            } else {
-                modified = false;
-            }
-            if (modified) {
+        if (getFeatureValue(FeatureConfig.BETTER_CONFIG_PANE)) {
+            if ((config).getKeybind() instanceof KeybindMulti)
+            {
+                this.addButtonAndHotkeyWidgets$tweakerkit(x, y, configWidth, config);
                 ci.cancel();
             }
         }
@@ -129,31 +119,4 @@ public abstract class WidgetListConfigOptionMixin extends WidgetConfigOptionBase
         this.addButton(keybindButton, this.host.getButtonPressListener());
         this.addKeybindResetButton(x, y, keybind, keybindButton);
     }
-
-    private void addBooleanAndHotkeyWidgets$tweakerkit(int x, int y, int configWidth, IHotkeyTogglable config) {
-        IKeybind keybind = config.getKeybind();
-
-        int booleanBtnWidth = (configWidth - 24) / 2;
-        ConfigButtonBoolean booleanButton = new ConfigButtonBoolean(x, y, booleanBtnWidth, 20, config);
-        x += booleanBtnWidth + 2;
-        configWidth -= booleanBtnWidth + 2 + 22;
-
-        ConfigButtonKeybind keybindButton = new ConfigButtonKeybind(x, y, configWidth, 20, keybind, this.host);
-        x += configWidth + 2;
-
-        this.addWidget(new WidgetKeybindSettings(x, y, 20, 20, keybind, config.getName(), this.parent, this.host.getDialogHandler()));
-        x += 24;
-
-        ButtonGeneric resetButton = this.createResetButton(x, y, config);
-
-        ConfigOptionChangeListenerButton booleanChangeListener = new ConfigOptionChangeListenerButton(config, resetButton, null);
-        HotkeyedBooleanResetListener resetListener = new HotkeyedBooleanResetListener(config, booleanButton, keybindButton, resetButton, this.host);
-
-        this.host.addKeybindChangeListener(resetListener);
-
-        this.addButton(booleanButton, booleanChangeListener);
-        this.addButton(keybindButton, this.host.getButtonPressListener());
-        this.addButton(resetButton, resetListener);
-    }
-
 }
