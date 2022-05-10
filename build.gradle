@@ -31,8 +31,8 @@ if (buildNumber != null) {
 }
 String fullModVersion = project.mod_version + versionSuffix
 
-archivesBaseName = project.archives_base_name
-version = 'mc' + project.minecraft_version + '-v' + fullModVersion
+archivesBaseName = project.archives_base_name + '-mc' + project.minecraft_version
+version = '-v' + fullModVersion
 group = project.maven_group
 
 dependencies {
