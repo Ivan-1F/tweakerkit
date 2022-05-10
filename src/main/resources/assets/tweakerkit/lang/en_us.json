@@ -1,0 +1,4 @@
+{
+  "tweakerkit.gui.trigger_button.text": "Trigger",
+  "tweakerkit.gui.trigger_button.hover": "Click to trigger %1$s once\n§7This will simulate hotkey pressed and released in order"
+}
