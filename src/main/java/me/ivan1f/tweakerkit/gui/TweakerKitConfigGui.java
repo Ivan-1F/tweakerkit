@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class TweakerKitConfigGui extends GuiConfigsBase {
     public FeatureConfig features = new FeatureConfig();
-//    public Map<GuiFeatureType, Boolean> features = Maps.newHashMap();
 
     public TweakerKitConfigGui(int listX, int listY, String modId, @Nullable Screen parent, String titleKey, Object... args) {
         super(listX, listY, modId, parent, titleKey, args);
