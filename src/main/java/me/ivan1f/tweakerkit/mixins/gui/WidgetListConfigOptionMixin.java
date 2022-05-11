@@ -3,6 +3,7 @@ package me.ivan1f.tweakerkit.mixins.gui;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IHotkeyTogglable;
 import fi.dy.masa.malilib.config.gui.ConfigOptionChangeListenerButton;
+import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.ConfigButtonBoolean;
@@ -12,20 +13,36 @@ import fi.dy.masa.malilib.gui.widgets.*;
 import fi.dy.masa.malilib.hotkeys.*;
 import fi.dy.masa.malilib.util.StringUtils;
 import me.ivan1f.tweakerkit.gui.*;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
+
+import java.util.Objects;
 
 @Mixin(WidgetConfigOption.class)
 public abstract class WidgetListConfigOptionMixin extends WidgetConfigOptionBase<GuiConfigsBase.ConfigOptionWrapper> {
-    @Shadow(remap = false) @Final protected IKeybindConfigGui host;
+    @Shadow(remap = false)
+    @Final
+    protected IKeybindConfigGui host;
 
-    @Shadow(remap = false) protected abstract void addKeybindResetButton(int x, int y, IKeybind keybind, ConfigButtonKeybind buttonHotkey);
+    @Shadow(remap = false)
+    protected abstract void addKeybindResetButton(int x, int y, IKeybind keybind, ConfigButtonKeybind buttonHotkey);
+
+    @Unique
+    private boolean initialBoolean;
+
+    @Shadow(remap = false)
+    @Final
+    protected GuiConfigsBase.ConfigOptionWrapper wrapper;
+
+    @Mutable
+    @Shadow(remap = false)
+    @Final
+    protected KeybindSettings initialKeybindSettings;
 
     public WidgetListConfigOptionMixin(int x, int y, int width, int height, WidgetListConfigOptionsBase<?, ?> parent, GuiConfigsBase.ConfigOptionWrapper entry, int listIndex) {
         super(x, y, width, height, parent, entry, listIndex);
@@ -38,6 +55,22 @@ public abstract class WidgetListConfigOptionMixin extends WidgetConfigOptionBase
 
     private <T> T getFeatureValue(FeatureConfig.Key<T> key) {
         return ((TweakerKitConfigGui) ((WidgetListConfigOptionsAccessor) this.parent).getParent()).getFeatureValue(key);
+    }
+
+    /**
+     * Stolen from malilib 1.18 v0.11.4
+     * to make compact ConfigBooleanHotkeyed option panel works
+     */
+    @Inject(method = "<init>", at = @At("TAIL"), remap = false)
+    private void initInitialState(CallbackInfo ci) {
+        if (isTweakerKitConfigGui() && this.wrapper.getType() == GuiConfigsBase.ConfigOptionWrapper.Type.CONFIG) {
+            IConfigBase config = wrapper.getConfig();
+            if (config instanceof ConfigBooleanHotkeyed) {
+                this.initialBoolean = ((ConfigBooleanHotkeyed) config).getBooleanValue();
+                this.initialStringValue = ((ConfigBooleanHotkeyed) config).getKeybind().getStringValue();
+                this.initialKeybindSettings = ((ConfigBooleanHotkeyed) config).getKeybind().getSettings();
+            }
+        }
     }
 
     @ModifyArgs(
@@ -156,4 +189,32 @@ public abstract class WidgetListConfigOptionMixin extends WidgetConfigOptionBase
         this.addButton(resetButton, resetListener);
     }
 
+    /**
+     * Stolen from malilib 1.18 v0.11.4
+     * to make compact ConfigBooleanHotkeyed option panel works
+     */
+    @Inject(
+            method = "wasConfigModified",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lfi/dy/masa/malilib/gui/GuiConfigsBase$ConfigOptionWrapper;getConfig()Lfi/dy/masa/malilib/config/IConfigBase;",
+                    ordinal = 0,
+                    remap = false
+            ),
+            cancellable = true,
+            remap = false
+    )
+    private void specialJudgeCustomConfigBooleanHotkeyed(CallbackInfoReturnable<Boolean> cir) {
+        if (!isTweakerKitConfigGui()) return;
+        IConfigBase config = this.wrapper.getConfig();
+        if (config instanceof ConfigBooleanHotkeyed) {
+            ConfigBooleanHotkeyed booleanHotkey = (ConfigBooleanHotkeyed) config;
+            IKeybind keybind = booleanHotkey.getKeybind();
+            cir.setReturnValue(
+                    this.initialBoolean != booleanHotkey.getBooleanValue() ||
+                            !Objects.equals(this.initialStringValue, keybind.getStringValue()) ||
+                            !Objects.equals(this.initialKeybindSettings, keybind.getSettings())
+            );
+        }
+    }
 }
